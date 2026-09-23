@@ -1,0 +1,33 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+
+
+@dataclass(slots=True)
+class AppConfig:
+    project_root: Path
+    database_path: Path
+    reports_dir: Path
+    uploads_dir: Path
+    assets_dir: Path
+
+
+def get_app_config() -> AppConfig:
+    project_root = Path(__file__).resolve().parent.parent
+    return AppConfig(
+        project_root=project_root,
+        database_path=project_root / "database" / "vbcua.sqlite3",
+        reports_dir=project_root / "reports",
+        uploads_dir=project_root / "reports" / "uploads",
+        assets_dir=project_root / "assets",
+    )
+
+
+def ensure_runtime_directories(config: AppConfig | None = None) -> AppConfig:
+    config = config or get_app_config()
+    config.database_path.parent.mkdir(parents=True, exist_ok=True)
+    config.reports_dir.mkdir(parents=True, exist_ok=True)
+    config.uploads_dir.mkdir(parents=True, exist_ok=True)
+    config.assets_dir.mkdir(parents=True, exist_ok=True)
+    return config
